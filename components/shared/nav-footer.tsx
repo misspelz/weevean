@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getUserInitials } from "@/lib/utils";
 import {
   BadgeCheck,
   Bell,
@@ -24,6 +25,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
+import { ThemeToggleSubMenu } from "./ThemeToggle";
 
 export const NavFooter = () => {
   const isMobile = useIsMobile();
@@ -45,7 +47,9 @@ export const NavFooter = () => {
                     }
                     alt={"Jane Doe"}
                   />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getUserInitials("Jane Doe")}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Jane Doe</span>
@@ -63,13 +67,10 @@ export const NavFooter = () => {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src={
-                        "https://pbs.twimg.com/profile_images/1909615404789506048/MTqvRsjo_400x400.jpg"
-                      }
-                      alt={"Jane Doe"}
-                    />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarImage src={""} alt={"Jane Doe"} />
+                    <AvatarFallback className="rounded-lg">
+                      {getUserInitials("Jane Doe")}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Jane Doe</span>
@@ -100,6 +101,7 @@ export const NavFooter = () => {
                   <Bell />
                   Notifications
                 </DropdownMenuItem>
+                <ThemeToggleSubMenu />
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
