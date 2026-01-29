@@ -62,16 +62,12 @@ Weevean is designed to provide developer communities with a modern, efficient co
 
 #### FR-1.1: User Registration
 
-- Users must be able to create accounts using email and password
-- Email verification must be required before account access
-- Password must meet minimum security requirements:
-  - Minimum 8 characters
-  - At least one number or special character
+- Users must be able to create accounts using GitHub or Google
 - Display name is optional during registration
 
 #### FR-1.2: User Authentication
 
-- Users must be able to log in with email and password
+- Users must be able to log in with GitHub or Google
 - System must maintain authenticated sessions
 - Sessions must persist across browser refreshes
 - Users must be able to log out
@@ -297,10 +293,12 @@ Weevean is designed to provide developer communities with a modern, efficient co
 
 #### NFR-2.1: Authentication
 
-- Passwords must be hashed with industry-standard algorithm (bcrypt)
-- Sessions must use HTTP-only, secure cookies
-- Session tokens must expire after 7 days of inactivity
-- Password reset must use time-limited, single-use tokens
+### Weevean uses OAuth-only authentication for simplicity and security:
+
+- **GitHub**: Sign in with your GitHub account
+- **Google**: Sign in with your Google account
+
+No passwords, no email verification, no waiting. Just click and you're in.
 
 #### NFR-2.2: Authorization
 
@@ -418,18 +416,12 @@ Weevean is designed to provide developer communities with a modern, efficient co
 **US-1.1**: As a new user, I want to create an account so I can access the platform.
 
 - **Acceptance Criteria**:
-  - Can sign up with email and password
-  - Receive email verification
-  - Cannot access platform until verified
-  - Redirected to login after verification
+  - Can sign up with GitHub or Google
 
 **US-1.2**: As a registered user, I want to log in so I can access my workspaces.
 
 - **Acceptance Criteria**:
-  - Can log in with email and password
-  - Invalid credentials show clear error message
-  - Successful login redirects to main chat interface
-  - Session persists across browser refreshes
+  - Can log in with GitHub or Google
 
 ### Epic 2: Workspace Management
 
@@ -588,34 +580,24 @@ Weevean is designed to provide developer communities with a modern, efficient co
 
 ### Authentication Endpoints
 
-#### POST /api/auth/signup
+#### POST /api/auth/callback/route.ts
 
 ```typescript
-Request: {
-  email: string
-  password: string
-  displayName?: string
-}
-Response: {
-  success: boolean
-  message: string
-}
-```
+// Mock sample
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-#### POST /api/auth/login
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
 
-```typescript
-Request: {
-  email: string;
-  password: string;
-}
-Response: {
-  success: boolean;
-  user: {
-    id: string;
-    email: string;
-    displayName: string;
+  if (code) {
+    const supabase = createRouteHandlerClient({ cookies });
+    await supabase.auth.exchangeCodeForSession(code);
   }
+
+  return NextResponse.redirect(`${requestUrl.origin}/chat`);
 }
 ```
 

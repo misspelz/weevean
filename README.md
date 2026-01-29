@@ -10,6 +10,7 @@ Weevean is a self-hosted Slack alternative designed for teams who want control o
 
 ## Core Features
 
+- OAuth-only authentication (GitHub, Google)
 - Multi-tenant workspaces with channel organization
 - Direct messaging and message threading
 - AI-powered context assistant and smart summaries
