@@ -40,7 +40,7 @@ Weevean follows a modern serverless architecture pattern optimized for scalabili
 │   Supabase Auth      │    │   Neon Postgres      │
 │  - User Management   │    │  - User Data         │
 │  - Session Handling  │    │  - Workspaces        │
-│  - Email Verification│    │  - Messages          │
+│  - OAuth             │    │  - Messages          │
 └──────────────────────┘    │  - Channels          │
                             └──────────────────────┘
 ```
@@ -184,26 +184,12 @@ Standardized HTTP status codes:
 
 ### Authentication Flow
 
-```
-┌──────┐                ┌──────────┐              ┌──────────┐
-│Client│                │  Next.js │              │ Supabase │
-└──┬───┘                └────┬─────┘              └────┬─────┘
-   │                         │                         │
-   │ POST /auth/login        │                         │
-   ├────────────────────────>│                         │
-   │                         │  signInWithPassword()   │
-   │                         ├────────────────────────>│
-   │                         │                         │
-   │                         │   {access_token, user}  │
-   │                         │<────────────────────────┤
-   │                         │                         │
-   │  Set HTTP-only cookie   │                         │
-   │<────────────────────────┤                         │
-   │                         │                         │
-   │ Redirect to /chat       │                         │
-   │<────────────────────────┤                         │
-   │                         │                         │
-```
+Weevean uses OAuth-only authentication for simplicity and security:
+
+- **GitHub**: Sign in with your GitHub account
+- **Google**: Sign in with your Google account
+
+No passwords, no email verification, no waiting. Just click and you're in.
 
 ### Authorization Middleware
 
@@ -514,7 +500,7 @@ Weevean/
 
 - **Encrypted connections**: TLS for all traffic
 - **Encrypted at rest**: Database encryption
-- **Sensitive data**: No passwords stored (Supabase handles)
+- **Sensitive data**: No passwords stored (OAuth used - Gg/Google)
 - **Audit logs**: Track invite usage and membership changes
 
 ---

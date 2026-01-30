@@ -251,18 +251,21 @@ Weevean uses a modern, serverless-first architecture optimized for developer pro
 
 ## Authentication & Authorization
 
-### Supabase Auth
+### Supabase Auth (OAuth only)
+
+Weevean uses OAuth-only authentication for simplicity and security:
+
+- **GitHub**: Sign in with your GitHub account
+- **Google**: Sign in with your Google account
 
 **Purpose**: User authentication and session management
 
 **Why Supabase Auth**:
 
-- Full-featured auth (email/password, OAuth, magic links)
+- No passwords, no email verification, no waiting. Just click and you're in (OAuth Only)
 - Row Level Security (RLS) integration
-- Automatic email verification
 - Session management with refresh tokens
 - HTTP-only cookie support
-- Open source (self-hostable if needed)
 
 **Alternatives Considered**:
 
@@ -275,8 +278,6 @@ Weevean uses a modern, serverless-first architecture optimized for developer pro
 
 - HTTP-only cookies (XSS protection)
 - Automatic token refresh
-- Email verification required
-- Password hashing (bcrypt)
 - CSRF protection
 
 ---
