@@ -37,7 +37,7 @@ Weevean follows a modern serverless architecture pattern optimized for scalabili
 └───────────┬────────────────────────────┬────────────────────┘
             │                            │
 ┌───────────▼──────────┐    ┌───────────▼──────────┐
-│   Supabase Auth      │    │   Neon Postgres      │
+│   Better Auth        │    │   Neon Postgres      │
 │  - User Management   │    │  - User Data         │
 │  - Session Handling  │    │  - Workspaces        │
 │  - OAuth             │    │  - Messages          │
@@ -51,7 +51,7 @@ Weevean follows a modern serverless architecture pattern optimized for scalabili
 - **React 19**: Latest features
 - **TypeScript**: Type safety across the entire stack
 - **Neon Postgres**: Serverless, autoscaling database
-- **Supabase Auth**: Managed authentication with row-level security
+- **Better Auth**: [Better Auth](https://www.better-auth.com/)
 - **Vercel**: Edge-optimized hosting with zero-config deployments
 
 ---
@@ -441,10 +441,6 @@ Weevean/
 │   │   ├── index.ts              # Database client
 │   │   ├── schema.ts             # Drizzle schema
 │   │   └── queries.ts            # Data access layer
-│   ├── supabase/
-│   │   ├── client.ts             # Browser client
-│   │   ├── server.ts             # Server client
-│   │   └── proxy.ts              # Middleware helper
 │   ├── code-execution/
 │   │   └── runtime-manager.ts    # WASM execution (future)
 │   └── utils.ts                  # Utility functions

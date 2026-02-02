@@ -580,26 +580,7 @@ No passwords, no email verification, no waiting. Just click and you're in.
 
 ### Authentication Endpoints
 
-#### POST /api/auth/callback/route.ts
-
-```typescript
-// Mock sample
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-
-export async function GET(request: Request) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get("code");
-
-  if (code) {
-    const supabase = createRouteHandlerClient({ cookies });
-    await supabase.auth.exchangeCodeForSession(code);
-  }
-
-  return NextResponse.redirect(`${requestUrl.origin}/chat`);
-}
-```
+[Better Auth](https://www.better-auth.com/)
 
 ### Workspace Endpoints
 
