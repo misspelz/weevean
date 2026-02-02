@@ -24,7 +24,7 @@ Built with modern, production-ready technologies:
 
 - **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS v4
 - **Backend**: Next.js API Routes, Neon Postgres
-- **Auth**: Supabase Auth with Row Level Security
+- **Auth**: [Better Auth](https://www.better-auth.com/)
 - **AI**: Vercel AI SDK (multi-provider support)
 - **Deploy**: Vercel or self-hosted
 
@@ -38,7 +38,7 @@ pnpm install
 
 # Configure environment variables
 cp .env.example .env.local
-# Add your Neon and Supabase credentials
+# Add your credentials
 
 # Run migrations and start
 pnpm run db:migrate
@@ -100,4 +100,4 @@ Open source and free forever. Use it, modify it, deploy it anywhere.
 
 ---
 
-Built with Next.js, Supabase, Neon, Tailwind CSS, and the Vercel AI SDK.
+Built with Next.js, Neon, Tailwind CSS, and the Vercel AI SDK.
