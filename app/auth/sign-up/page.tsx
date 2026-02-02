@@ -1,10 +1,9 @@
+"use client";
 import { GitHubIcon, GoogleIcon, WeeveanIcon } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 
+import { authClient } from "@/lib/auth-client";
 const FEATURES = [
   {
     title: "Self-hosted & open source",
@@ -21,6 +20,20 @@ const FEATURES = [
 ];
 
 export default function SignupPage() {
+  const handleGoogleSignUp = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+  };
+
+  const handleGitHubSignUp = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+  };
+
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="flex flex-col justify-center px-6 py-12 lg:px-12">
@@ -41,6 +54,7 @@ export default function SignupPage() {
 
           <div className="space-y-3">
             <Button
+              onClick={handleGitHubSignUp}
               variant="outline"
               className="w-full gap-3 h-11"
               type="button"
@@ -49,6 +63,7 @@ export default function SignupPage() {
               <span>Continue with GitHub</span>
             </Button>
             <Button
+              onClick={handleGoogleSignUp}
               variant="outline"
               className="w-full gap-3 h-11"
               type="button"
@@ -57,50 +72,6 @@ export default function SignupPage() {
               <span>Continue with Google</span>
             </Button>
           </div>
-
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground">
-                or continue with email
-              </span>
-            </div>
-          </div>
-
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="signup-email">Email address</Label>
-              <Input
-                id="signup-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="signup-password">Password</Label>
-              <Input
-                id="signup-password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                placeholder="••••••••"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Must be at least 8 characters long
-              </p>
-            </div>
-
-            <Button type="submit" className="w-full h-11 mt-6">
-              Create account
-            </Button>
-          </form>
 
           <p className="mt-6 text-xs text-center text-muted-foreground">
             By creating an account, you agree to our{" "}
