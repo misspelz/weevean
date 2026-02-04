@@ -1,11 +1,26 @@
+"use client";
 import { GitHubIcon, GoogleIcon, WeeveanIcon } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { authClient } from "@/lib/auth-client";
+
 export default function LoginPage() {
+  const handleGoogleSignIn = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+  };
+
+  const handleGitHubSignIn = async () => {
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/",
+    });
+  };
+
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden lg:block bg-muted">
@@ -55,6 +70,7 @@ export default function LoginPage() {
 
           <div className="space-y-3">
             <Button
+              onClick={handleGitHubSignIn}
               variant="outline"
               className="w-full gap-3 h-11"
               type="button"
@@ -63,6 +79,7 @@ export default function LoginPage() {
               <span>Continue with GitHub</span>
             </Button>
             <Button
+              onClick={handleGoogleSignIn}
               variant="outline"
               className="w-full gap-3 h-11"
               type="button"
@@ -72,64 +89,38 @@ export default function LoginPage() {
             </Button>
           </div>
 
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground">
-                or continue with email
-              </span>
-            </div>
+          <div className="text-center mt-5">
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/auth/sign-up"
+                className="font-medium text-primary hover:text-primary/80 transition-colors inline-flex items-center group"
+              >
+                Sign up
+                <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </p>
           </div>
 
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-sm text-primary hover:text-primary/90"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            <Button type="submit" className="w-full h-11 mt-6">
-              Sign in
-            </Button>
-          </form>
-
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            <span>{"Don't have an account?"}</span>
-            <Link
-              href="/auth/sign-up"
-              className="font-medium text-primary hover:text-primary/90 ml-1"
-            >
-              Sign up
-            </Link>
-          </p>
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground/50 mt-8">
+              By clicking continue, you agree to our{" "}
+              <Link
+                href="/terms"
+                className="underline hover:text-muted-foreground"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                className="underline hover:text-muted-foreground"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </div>
         </div>
       </div>
     </div>
