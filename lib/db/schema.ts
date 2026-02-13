@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { pgTable, text, timestamp, uuid, varchar, boolean, integer, pgEnum } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -54,7 +53,7 @@ export const messages = pgTable('messages', {
   channelId: uuid('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
-  parentId: uuid('parent_id'), // Self-reference for threading - constraint added below
+  parentId: uuid('parent_id'), // Self-reference for threading
   edited: boolean('edited').default(false).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -128,99 +127,10 @@ export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) =
   }),
   user: one(users, {
     fields: [workspaceMembers.userId],
-=======
-import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-
-export const users = pgTable("users", {
-  id: text("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  name: text("name").notNull().default("User"),
-  email_verified: boolean("email_verified").default(false).notNull(),
-  image: text("image"),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  role: text("role").default("user"),
-});
-
-export const session = pgTable(
-  "session",
-  {
-    id: text("id").primaryKey(),
-    expires_at: timestamp("expires_at").notNull(),
-    token: text("token").notNull().unique(),
-    created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at")
-      .$onUpdate(() => /* @__PURE__ */ new Date())
-      .notNull(),
-    ip_address: text("ip_address"),
-    user_agent: text("user_agent"),
-    user_id: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-  },
-  (table) => [index("session_user_id_idx").on(table.user_id)]
-);
-
-export const account = pgTable(
-  "account",
-  {
-    id: text("id").primaryKey(),
-    account_id: text("account_id").notNull(),
-    provider_id: text("provider_id").notNull(),
-    user_id: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    access_token: text("access_token"),
-    refresh_token: text("refresh_token"),
-    id_token: text("id_token"),
-    access_token_expires_at: timestamp("access_token_expires_at"),
-    refresh_token_expires_at: timestamp("refresh_token_expires_at"),
-    scope: text("scope"),
-    password: text("password"),
-    created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at")
-      .$onUpdate(() => /* @__PURE__ */ new Date())
-      .notNull(),
-  },
-  (table) => [index("account_user_id_idx").on(table.user_id)]
-);
-
-export const verification = pgTable(
-  "verification",
-  {
-    id: text("id").primaryKey(),
-    identifier: text("identifier").notNull(),
-    value: text("value").notNull(),
-    expires_at: timestamp("expires_at").notNull(),
-    created_at: timestamp("created_at").defaultNow().notNull(),
-    updated_at: timestamp("updated_at")
-      .defaultNow()
-      .$onUpdate(() => /* @__PURE__ */ new Date())
-      .notNull(),
-  },
-  (table) => [index("verification_identifier_idx").on(table.identifier)]
-);
-
-// Relations
-
-export const usersRelations = relations(users, ({ many }) => ({
-  sessions: many(session),
-  accounts: many(account),
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  users: one(users, {
-    fields: [session.user_id],
->>>>>>> 1b011ae0ce86e3590e2ca96bd0b2ad418971d42d
     references: [users.id],
   }),
 }));
 
-<<<<<<< HEAD
 export const channelsRelations = relations(channels, ({ one, many }) => ({
   workspace: one(workspaces, {
     fields: [channels.workspaceId],
@@ -294,11 +204,6 @@ export const workspaceInvitesRelations = relations(workspaceInvites, ({ one }) =
   }),
   creator: one(users, {
     fields: [workspaceInvites.createdBy],
-=======
-export const accountRelations = relations(account, ({ one }) => ({
-  users: one(users, {
-    fields: [account.user_id],
->>>>>>> 1b011ae0ce86e3590e2ca96bd0b2ad418971d42d
     references: [users.id],
   }),
 }));

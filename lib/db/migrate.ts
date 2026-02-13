@@ -1,6 +1,11 @@
+import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { migrate } from 'drizzle-orm/neon-http/migrator';
-import { neon } from '@neondatabase/serverless';
+import { config } from 'dotenv';
+import * as schema from './schema';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
 
 /**
  * Run database migrations programmatically
@@ -14,7 +19,10 @@ export async function runMigrations() {
   console.log('🔄 Running database migrations...');
 
   const sql = neon(process.env.DATABASE_URL);
-  const db = drizzle(sql);
+  const db = drizzle({
+    client: sql,
+    schema,
+  });
 
   try {
     await migrate(db, { migrationsFolder: './lib/db/migrations' });
