@@ -163,3 +163,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+.chat-container {
+  @apply mx-auto min-w-0 max-w-4xl px-2 md:px-4;
+}
