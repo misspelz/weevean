@@ -1,7 +1,6 @@
-import { defineConfig, type Config } from "drizzle-kit";
 import { config } from "dotenv";
+import { defineConfig, type Config } from "drizzle-kit";
 
-// Load environment variables from .env.local
 config({ path: ".env.local" });
 
 if (!process.env.DATABASE_URL) {
@@ -9,7 +8,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default defineConfig({
-  schema: "./lib/db/schema.ts",
+  schema: ["./lib/db/schema.ts"],
   out: "./lib/db/migrations",
   dialect: "postgresql",
   dbCredentials: {

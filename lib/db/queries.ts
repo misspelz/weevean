@@ -1,20 +1,16 @@
-import { db } from './index';
-import { eq, and, desc } from 'drizzle-orm';
-import { 
-  users, 
-  workspaces, 
-  workspaceMembers, 
-  channels, 
-  messages, 
-  reactions,
+import { and, desc, eq } from "drizzle-orm";
+import { db } from "./index";
+import {
+  channels,
   directMessages,
   dmMessages,
-  workspaceInvites 
-} from './schema';
-
-// ============================================
-// User Queries
-// ============================================
+  messages,
+  reactions,
+  users,
+  workspaceInvites,
+  workspaceMembers,
+  workspaces,
+} from "./schema";
 
 export async function getUserById(userId: string) {
   return await db.query.users.findFirst({
@@ -28,18 +24,7 @@ export async function getUserByEmail(email: string) {
   });
 }
 
-export async function createUser(data: {
-  id: string;
-  email: string;
-  displayName?: string;
-  avatarUrl?: string;
-}) {
-  return await db.insert(users).values(data).returning();
-}
-
-// ============================================
-// Workspace Queries
-// ============================================
+// Workspaces
 
 export async function getWorkspacesByUser(userId: string) {
   return await db.query.workspaceMembers.findMany({
@@ -78,14 +63,10 @@ export async function createWorkspace(data: {
   return await db.insert(workspaces).values(data).returning();
 }
 
-// ============================================
-// Workspace Member Queries
-// ============================================
-
 export async function addWorkspaceMember(data: {
   workspaceId: string;
   userId: string;
-  role?: 'admin' | 'member';
+  role?: "admin" | "member";
 }) {
   return await db.insert(workspaceMembers).values(data).returning();
 }
@@ -103,15 +84,13 @@ export async function isWorkspaceMember(workspaceId: string, userId: string) {
   const member = await db.query.workspaceMembers.findFirst({
     where: and(
       eq(workspaceMembers.workspaceId, workspaceId),
-      eq(workspaceMembers.userId, userId)
+      eq(workspaceMembers.userId, userId),
     ),
   });
   return !!member;
 }
 
-// ============================================
-// Channel Queries
-// ============================================
+// Channels
 
 export async function getChannelsByWorkspace(workspaceId: string) {
   return await db.query.channels.findMany({
@@ -136,15 +115,13 @@ export async function createChannel(data: {
   workspaceId: string;
   name: string;
   description?: string;
-  type?: 'public' | 'private';
+  type?: "public" | "private";
   createdBy: string;
 }) {
   return await db.insert(channels).values(data).returning();
 }
 
-// ============================================
-// Message Queries
-// ============================================
+// Messages
 
 export async function getMessagesByChannel(channelId: string, limit = 50) {
   return await db.query.messages.findMany({
@@ -183,9 +160,7 @@ export async function deleteMessage(messageId: string) {
   return await db.delete(messages).where(eq(messages.id, messageId));
 }
 
-// ============================================
-// Reaction Queries
-// ============================================
+// Reactions
 
 export async function addReaction(data: {
   messageId: string;
@@ -195,28 +170,31 @@ export async function addReaction(data: {
   return await db.insert(reactions).values(data).returning();
 }
 
-export async function removeReaction(messageId: string, userId: string, emoji: string) {
+export async function removeReaction(
+  messageId: string,
+  userId: string,
+  emoji: string,
+) {
   return await db
     .delete(reactions)
     .where(
       and(
         eq(reactions.messageId, messageId),
         eq(reactions.userId, userId),
-        eq(reactions.emoji, emoji)
-      )
+        eq(reactions.emoji, emoji),
+      ),
     );
 }
 
-// ============================================
-// Direct Message Queries
-// ============================================
-
-export async function getOrCreateDM(participant1Id: string, participant2Id: string) {
+export async function getOrCreateDM(
+  participant1Id: string,
+  participant2Id: string,
+) {
   // Check if DM exists (in either direction)
   const existingDM = await db.query.directMessages.findFirst({
     where: and(
       eq(directMessages.participant1Id, participant1Id),
-      eq(directMessages.participant2Id, participant2Id)
+      eq(directMessages.participant2Id, participant2Id),
     ),
   });
 
@@ -226,7 +204,7 @@ export async function getOrCreateDM(participant1Id: string, participant2Id: stri
   const reverseDM = await db.query.directMessages.findFirst({
     where: and(
       eq(directMessages.participant1Id, participant2Id),
-      eq(directMessages.participant2Id, participant1Id)
+      eq(directMessages.participant2Id, participant1Id),
     ),
   });
 
@@ -245,7 +223,7 @@ export async function getDMsByUser(userId: string) {
   return await db.query.directMessages.findMany({
     where: and(
       eq(directMessages.participant1Id, userId),
-      eq(directMessages.participant2Id, userId)
+      eq(directMessages.participant2Id, userId),
     ),
     with: {
       participant1: true,
@@ -273,9 +251,7 @@ export async function createDMMessage(data: {
   return await db.insert(dmMessages).values(data).returning();
 }
 
-// ============================================
-// Workspace Invite Queries
-// ============================================
+// Workspace Invites
 
 export async function createWorkspaceInvite(data: {
   workspaceId: string;

@@ -90,7 +90,7 @@ export const auth = betterAuth({
 
   advanced: {
     database: {
-      generateId: () => crypto.randomUUID(),
+      generateId: "uuid",
     },
   },
   plugins: [nextCookies()],
