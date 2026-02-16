@@ -13,7 +13,13 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { ChevronRight, MoreHorizontal, Users2Icon } from "lucide-react";
+import {
+  ChevronRight,
+  MoreHorizontal,
+  PlusIcon,
+  Users2Icon,
+} from "lucide-react";
+import { Button } from "../ui/button";
 
 const channels = [
   {
@@ -51,7 +57,16 @@ export const NavChannels = () => {
             <CollapsibleTrigger asChild>
               <SidebarMenuButton tooltip={"Channels"}>
                 <Users2Icon />
-                <span>Channels</span>
+                <div className="flex items-center gap-2 justify-between w-full">
+                  <span>Channels</span>
+                  <Button
+                    className="hover:text-foreground bg-none rounded-full"
+                    variant={"ghost"}
+                    size={"icon"}
+                  >
+                    <PlusIcon className="w-3 h-3" />
+                  </Button>
+                </div>
                 <ChevronRight className="ml-auto transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90" />
               </SidebarMenuButton>
             </CollapsibleTrigger>

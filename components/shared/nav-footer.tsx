@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { signOut } from "@/lib/auth-client";
 import { getUserInitials } from "@/lib/utils";
 import {
   BadgeCheck,
@@ -25,10 +26,12 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ThemeToggleSubMenu } from "./ThemeToggle";
 
 export const NavFooter = () => {
   const isMobile = useIsMobile();
+  const router = useRouter();
 
   return (
     <SidebarFooter>
@@ -104,7 +107,17 @@ export const NavFooter = () => {
                 <ThemeToggleSubMenu />
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        router.push("/auth/login");
+                      },
+                    },
+                  })
+                }
+              >
                 <LogOut />
                 Log out
               </DropdownMenuItem>

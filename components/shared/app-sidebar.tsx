@@ -1,5 +1,5 @@
 import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar";
-import AppHeader from "./app-header";
+import AppHeader from "./sidebar-app-header";
 import { NavChannels } from "./nav-channels";
 import { NavDms } from "./nav-dms";
 import { NavFooter } from "./nav-footer";
