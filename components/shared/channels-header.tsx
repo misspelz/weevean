@@ -15,7 +15,7 @@ import {
 } from "@/components/animate-ui/components/radix/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import {
   Bell,
   BellOff,

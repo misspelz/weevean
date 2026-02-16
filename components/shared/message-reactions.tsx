@@ -7,7 +7,7 @@ import {
 } from "@/components/animate-ui/components/radix/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Plus, SmilePlus } from "lucide-react";
 
 interface Reaction {
