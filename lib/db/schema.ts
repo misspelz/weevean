@@ -270,7 +270,7 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
     fields: [messages.channelId],
     references: [channels.id],
   }),
-  author: one(users, {
+  user: one(users, {
     fields: [messages.userId],
     references: [users.id],
   }),

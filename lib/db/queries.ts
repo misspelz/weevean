@@ -127,7 +127,7 @@ export async function getMessagesByChannel(channelId: string, limit = 50) {
   return await db.query.messages.findMany({
     where: eq(messages.channelId, channelId),
     with: {
-      author: true,
+      user: true,
       reactions: {
         with: {
           user: true,
