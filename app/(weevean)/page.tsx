@@ -8,9 +8,9 @@ import { useSession } from "@/lib/auth-client";
 import { useChannels, useMessages } from "@/lib/hooks";
 import { fetcher } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
-export default function Home() {
+function Home() {
   const searchParams = useSearchParams();
   const channelId = searchParams.get("channel");
   const workspaceId = searchParams.get("workspace");
@@ -125,5 +125,13 @@ export default function Home() {
         />
       </div>
     </div>
+  );
+}
+
+export default function HomeWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <Home />
+    </Suspense>
   );
 }

@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useWorkspaces } from "@/lib/hooks";
 import { ChevronsUpDown, Plus, RocketIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 
 const AppHeader = () => {
   const isMobile = useIsMobile();
@@ -149,4 +149,10 @@ const AppHeader = () => {
   );
 };
 
-export default AppHeader;
+export default function AppHeaderWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <AppHeader />
+    </Suspense>
+  );
+}

@@ -4,7 +4,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/animate-ui/primitives/radix/collapsible";
-import { CreateChannelModal } from "@/components/modals/create-channel-modal";
+import { CreateChannelModalWrapper } from "@/components/modals/create-channel-modal";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -25,10 +25,10 @@ import {
   Users2Icon,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Button } from "../ui/button";
 
-export const NavChannels = () => {
+const NavChannels = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const workspaceId = searchParams.get("workspace");
@@ -61,7 +61,7 @@ export const NavChannels = () => {
                 <Users2Icon />
                 <div className="flex items-center gap-2 justify-between w-full">
                   <span>Channels</span>
-                  <CreateChannelModal>
+                  <CreateChannelModalWrapper>
                     <Button
                       asChild
                       className="hover:text-foreground bg-none rounded-full"
@@ -73,7 +73,7 @@ export const NavChannels = () => {
                     >
                       <PlusIcon className="w-3 h-3" />
                     </Button>
-                  </CreateChannelModal>
+                  </CreateChannelModalWrapper>
                 </div>
                 <ChevronRight className="ml-auto transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90" />
               </SidebarMenuButton>
@@ -126,3 +126,11 @@ export const NavChannels = () => {
     </SidebarGroup>
   );
 };
+
+export default function NavChannelsWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <NavChannels />
+    </Suspense>
+  );
+}

@@ -18,7 +18,7 @@ import { Channels } from "@/lib/db/schema";
 import { useChannels } from "@/lib/hooks";
 import { fetcher } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 interface CreateChannelModalProps {
   children?: React.ReactNode;
@@ -26,7 +26,7 @@ interface CreateChannelModalProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export function CreateChannelModal({
+function CreateChannelModal({
   children,
   open: controlledOpen,
   onOpenChange: setControlledOpen,
@@ -166,5 +166,19 @@ export function CreateChannelModal({
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function CreateChannelModalWrapper({
+  children,
+  open,
+  onOpenChange,
+}: CreateChannelModalProps) {
+  return (
+    <Suspense fallback={null}>
+      <CreateChannelModal open={open} onOpenChange={onOpenChange}>
+        {children}
+      </CreateChannelModal>
+    </Suspense>
   );
 }
