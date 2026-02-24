@@ -7,6 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/animate-ui/components/radix/dropdown-menu";
+import { CreateWorkspaceModal } from "@/components/modals/create-workspace-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   SidebarHeader,
   SidebarMenu,
@@ -14,40 +16,51 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  BirdIcon,
-  ChevronsUpDown,
-  Code2,
-  LinkedinIcon,
-  Plus,
-} from "lucide-react";
-import { useState } from "react";
-
-const DATA = {
-  workspaces: [
-    {
-      name: "Weevean",
-      logo: BirdIcon,
-      plan: "Enterprise",
-    },
-    {
-      name: "Linkedin Gurus",
-      logo: LinkedinIcon,
-      plan: "Startup",
-    },
-    {
-      name: "Open Source",
-      logo: Code2,
-      plan: "Free",
-    },
-  ],
-};
+import { useWorkspaces } from "@/lib/hooks";
+import { ChevronsUpDown, Plus, RocketIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 
 const AppHeader = () => {
   const isMobile = useIsMobile();
-  const [activeTeam, setActiveTeam] = useState(DATA.workspaces[0]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { workspaces, isLoading } = useWorkspaces();
 
-  if (!activeTeam) return null;
+  const workspaceId = searchParams.get("workspace");
+
+  const activeTeam = useMemo(() => {
+    if (!workspaces || workspaces.length === 0) return null;
+    return workspaces.find((w) => w.id === workspaceId) || workspaces[0];
+  }, [workspaces, workspaceId]);
+
+  useEffect(() => {
+    if (workspaces && workspaces.length > 0 && !workspaceId) {
+      const defaultWorkspace = workspaces[0];
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("workspace", defaultWorkspace.id);
+      router.replace(`?${params.toString()}`);
+    }
+  }, [workspaces, workspaceId, router, searchParams]);
+
+  if (isLoading)
+    return <div className="p-4 text-sm text-muted-foreground">Loading...</div>;
+  if (!activeTeam)
+    return (
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <CreateWorkspaceModal>
+              <SidebarMenuButton>
+                <Plus className="size-4" />
+                <span>Create Workspace</span>
+              </SidebarMenuButton>
+            </CreateWorkspaceModal>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+    );
+
   return (
     <SidebarHeader>
       <SidebarMenu>
@@ -59,13 +72,22 @@ const AppHeader = () => {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <activeTeam.logo className="size-4" />
+                  {activeTeam.iconUrl ? (
+                    <Avatar className="size-8 rounded-lg">
+                      <AvatarImage src={activeTeam.iconUrl} />
+                      <AvatarFallback>
+                        {activeTeam.name.substring(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <RocketIcon className="size-4" />
+                  )}
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     {activeTeam.name}
                   </span>
-                  <span className="truncate text-xs">{activeTeam.plan}</span>
+                  <span className="truncate text-xs">{"Free"}</span>
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>
@@ -77,30 +99,48 @@ const AppHeader = () => {
               sideOffset={4}
             >
               <DropdownMenuLabel className="text-xs text-muted-foreground">
-                workspaces
+                Workspaces
               </DropdownMenuLabel>
-              {DATA.workspaces.map((team, index) => (
+              {workspaces?.map((team) => (
                 <DropdownMenuItem
-                  key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  key={team.id}
+                  onClick={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("workspace", team.id);
+                    params.delete("channel");
+                    router.push(`?${params.toString()}`);
+                  }}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-sm border">
-                    <team.logo className="size-4 shrink-0" />
+                    {team.iconUrl ? (
+                      <Avatar className="size-6 rounded-sm">
+                        <AvatarImage src={team.iconUrl} />
+                        <AvatarFallback>
+                          {team.name.substring(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <RocketIcon className="size-4 shrink-0" />
+                    )}
                   </div>
                   {team.name}
-                  {/* <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut> */}
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2">
-                <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                  <Plus className="size-4" />
-                </div>
-                <div className="font-medium text-muted-foreground">
-                  Add Workspace
-                </div>
-              </DropdownMenuItem>
+              <CreateWorkspaceModal>
+                <DropdownMenuItem
+                  className="gap-2 p-2"
+                  onSelect={(e) => e.preventDefault()} // Prevent closing dropdown immediately
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                    <Plus className="size-4" />
+                  </div>
+                  <div className="font-medium text-muted-foreground">
+                    Add Workspace
+                  </div>
+                </DropdownMenuItem>
+              </CreateWorkspaceModal>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
