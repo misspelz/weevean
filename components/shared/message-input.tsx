@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
 import {
   AtSign,
   Bold,
@@ -29,6 +28,7 @@ import {
   Smile,
   Sparkles,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface MessageInputProps {
@@ -37,6 +37,8 @@ interface MessageInputProps {
   onTyping?: () => void;
   disabled?: boolean;
   showAiTrigger?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
 const QUICK_EMOJIS = [
@@ -74,13 +76,24 @@ export function MessageInput({
   onTyping,
   disabled,
   showAiTrigger = true,
+  value: controlledValue,
+  onChange: setControlledValue,
 }: MessageInputProps) {
-  const [content, setContent] = useState("");
+  const [internalValue, setInternalValue] = useState("");
+  const isControlled = controlledValue !== undefined;
+  const content = isControlled ? controlledValue : internalValue;
+  const setContent = (newValue: string) => {
+    if (isControlled) {
+      setControlledValue?.(newValue);
+    } else {
+      setInternalValue(newValue);
+    }
+  };
+
   const [isFocused, setIsFocused] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea
   const adjustHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (textarea) {
@@ -97,7 +110,9 @@ export function MessageInput({
     const trimmed = content.trim();
     if (trimmed && !disabled) {
       onSend(trimmed);
-      setContent("");
+      if (!isControlled) {
+        setContent("");
+      }
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
@@ -105,13 +120,11 @@ export function MessageInput({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Send on Enter, new line on Shift+Enter
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
 
-    // Formatting shortcuts
     if (e.ctrlKey || e.metaKey) {
       const tool = FORMATTING_TOOLS.find((t) =>
         t.shortcut.toLowerCase().includes(e.key.toLowerCase()),
@@ -202,7 +215,6 @@ export function MessageInput({
               : "border-border bg-card/50",
           )}
         >
-          {/* Formatting toolbar */}
           <AnimatePresence>
             {(isFocused || content.length > 0) && (
               <motion.div
@@ -239,7 +251,6 @@ export function MessageInput({
 
                 <div className="mx-1 h-4 w-px bg-border" />
 
-                {/* Mention */}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -255,7 +266,6 @@ export function MessageInput({
                   </TooltipContent>
                 </Tooltip>
 
-                {/* AI trigger */}
                 {showAiTrigger && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -277,7 +287,6 @@ export function MessageInput({
             )}
           </AnimatePresence>
 
-          {/* Text input area */}
           <div className="flex items-end gap-2 p-3">
             <Textarea
               ref={textareaRef}
@@ -290,9 +299,7 @@ export function MessageInput({
               rows={1}
             />
 
-            {/* Right side actions */}
             <div className="flex items-center gap-1">
-              {/* Emoji picker */}
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -324,7 +331,6 @@ export function MessageInput({
                 </PopoverContent>
               </Popover>
 
-              {/* Send button */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -347,7 +353,6 @@ export function MessageInput({
           </div>
         </div>
 
-        {/* Hint */}
         <p className="mt-2 text-center text-xs text-muted-foreground">
           Press{" "}
           <kbd className="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs">

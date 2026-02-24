@@ -21,8 +21,8 @@ export interface Message {
   createdAt: Date;
   user: {
     id: string;
-    displayName: string;
-    avatarUrl?: string;
+    name: string;
+    image?: string | null;
   };
   reactions: Reaction[];
   parentId?: string;
@@ -101,7 +101,6 @@ export function MessageList({
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
@@ -117,7 +116,7 @@ export function MessageList({
               previousMessage,
             );
             const isGrouped = shouldGroupWithPrevious(message, previousMessage);
-            const isOwn = message.user.id === currentUserId;
+            const isOwn = message.user?.id === currentUserId;
 
             return (
               <div key={message.id}>
@@ -135,7 +134,6 @@ export function MessageList({
                     isGrouped && "mt-0.5",
                   )}
                 >
-                  {/* Avatar - only show if not grouped */}
                   <div className="w-10 shrink-0">
                     {!isGrouped && (
                       <motion.div
@@ -145,20 +143,18 @@ export function MessageList({
                       >
                         <Avatar className="h-10 w-10">
                           <AvatarImage
-                            src={message.user.avatarUrl || "/placeholder.svg"}
-                            alt={message.user.displayName}
+                            src={message.user.image || "/placeholder.svg"}
+                            alt={message.user.name}
                           />
                           <AvatarFallback className="bg-primary/20 text-primary">
-                            {message.user.displayName.charAt(0).toUpperCase()}
+                            {message.user.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </motion.div>
                     )}
                   </div>
 
-                  {/* Message content */}
                   <div className="min-w-0 flex-1">
-                    {/* Header - only show if not grouped */}
                     {!isGrouped && (
                       <div className="mb-1 flex items-baseline gap-2">
                         <span
@@ -167,7 +163,7 @@ export function MessageList({
                             isOwn ? "text-primary" : "text-foreground",
                           )}
                         >
-                          {message.user.displayName}
+                          {message.user.name}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {formatMessageDate(new Date(message.createdAt))}
@@ -175,12 +171,10 @@ export function MessageList({
                       </div>
                     )}
 
-                    {/* Content */}
                     <div className="text-sm text-foreground/90">
                       <Response>{message.content}</Response>
                     </div>
 
-                    {/* Reactions */}
                     {message.reactions.length > 0 && (
                       <MessageReactions
                         reactions={message.reactions}
@@ -188,8 +182,7 @@ export function MessageList({
                       />
                     )}
 
-                    {/* Thread indicator */}
-                    {message.replyCount && message.replyCount > 0 && (
+                    {(message.replyCount ?? 0) > 0 && (
                       <button
                         onClick={() => onReply?.(message.id)}
                         className="mt-2 flex items-center gap-1 text-xs text-primary hover:underline"
@@ -202,7 +195,6 @@ export function MessageList({
                     )}
                   </div>
 
-                  {/* Hover actions */}
                   <div className="absolute -top-3 right-2 hidden items-center gap-1 rounded-lg border border-border bg-card p-1 shadow-lg group-hover:flex">
                     <MessageReactions
                       reactions={[]}
