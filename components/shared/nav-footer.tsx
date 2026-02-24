@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { signOut } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth-client";
 import { getUserInitials } from "@/lib/utils";
 import {
   BadgeCheck,
@@ -32,6 +32,8 @@ import { ThemeToggleSubMenu } from "./ThemeToggle";
 export const NavFooter = () => {
   const isMobile = useIsMobile();
   const router = useRouter();
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <SidebarFooter>
@@ -45,18 +47,20 @@ export const NavFooter = () => {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={
-                      "https://pbs.twimg.com/profile_images/1909615404789506048/MTqvRsjo_400x400.jpg"
-                    }
-                    alt={"Jane Doe"}
+                    src={user?.image || ""}
+                    alt={user?.name || "User"}
                   />
                   <AvatarFallback className="rounded-lg">
-                    {getUserInitials("Jane Doe")}
+                    {getUserInitials(user?.name || "U")}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Jane Doe</span>
-                  <span className="truncate text-xs">janedoe@weevean.com</span>
+                  <span className="truncate font-semibold">
+                    {user?.name || "User"}
+                  </span>
+                  <span className="truncate text-xs">
+                    {user?.email || "user@example.com"}
+                  </span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
@@ -70,15 +74,20 @@ export const NavFooter = () => {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={""} alt={"Jane Doe"} />
+                    <AvatarImage
+                      src={user?.image || ""}
+                      alt={user?.name || "User"}
+                    />
                     <AvatarFallback className="rounded-lg">
-                      {getUserInitials("Jane Doe")}
+                      {getUserInitials(user?.name || "U")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Jane Doe</span>
+                    <span className="truncate font-semibold">
+                      {user?.name || "User"}
+                    </span>
                     <span className="truncate text-xs">
-                      janedoe@weevean.com
+                      {user?.email || "user@example.com"}
                     </span>
                   </div>
                 </div>
