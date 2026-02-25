@@ -20,4 +20,5 @@ export type WorkspaceWithOwner = Workspaces & {
 
 export type ChannelWithCreator = Channels & {
   creator: Users;
+  memberCount?: number;
 };

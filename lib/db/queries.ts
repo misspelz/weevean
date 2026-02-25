@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or } from "drizzle-orm";
 import { db } from "./index";
 import {
   channelMembers,
@@ -6,6 +6,7 @@ import {
   directMessages,
   dmMessages,
   messages,
+  privateChannelInvites,
   reactions,
   users,
   workspaceInvites,
@@ -110,12 +111,22 @@ export async function getChannelsByWorkspace(
     where: eq(channels.workspaceId, workspaceId),
     with: {
       creator: true,
+      members: true,
     },
   });
 
-  return allWorkspaceChannels.filter(
-    (c) => c.type === "public" || userChannelIds.includes(c.id),
-  );
+  const wsMembers = await db.query.workspaceMembers.findMany({
+    where: eq(workspaceMembers.workspaceId, workspaceId),
+    columns: { id: true },
+  });
+  const wsMemberCount = wsMembers.length;
+
+  return allWorkspaceChannels
+    .filter((c) => c.type === "public" || userChannelIds.includes(c.id))
+    .map((c) => ({
+      ...c,
+      memberCount: c.type === "public" ? wsMemberCount : c.members.length,
+    }));
 }
 
 export async function getChannelById(channelId: string) {
@@ -247,7 +258,7 @@ export async function getOrCreateDM(
 
 export async function getDMsByUser(userId: string) {
   return await db.query.directMessages.findMany({
-    where: and(
+    where: or(
       eq(directMessages.participant1Id, userId),
       eq(directMessages.participant2Id, userId),
     ),
@@ -293,7 +304,11 @@ export async function getInviteByCode(code: string) {
   return await db.query.workspaceInvites.findFirst({
     where: eq(workspaceInvites.code, code),
     with: {
-      workspace: true,
+      workspace: {
+        with: {
+          members: true,
+        },
+      },
       creator: true,
     },
   });
@@ -310,5 +325,46 @@ export async function incrementInviteUses(inviteId: string) {
     .update(workspaceInvites)
     .set({ uses: invite.uses + 1 })
     .where(eq(workspaceInvites.id, inviteId))
+    .returning();
+}
+
+// Private Channel Invites
+
+export async function createPrivateChannelInvite(data: {
+  channelId: string;
+  code: string;
+  createdBy: string;
+  expiresAt?: Date;
+  maxUses?: number;
+}) {
+  return await db.insert(privateChannelInvites).values(data).returning();
+}
+
+export async function getPrivateChannelInviteByCode(code: string) {
+  return await db.query.privateChannelInvites.findFirst({
+    where: eq(privateChannelInvites.code, code),
+    with: {
+      channel: {
+        with: {
+          workspace: true,
+          members: true,
+        },
+      },
+      creator: true,
+    },
+  });
+}
+
+export async function incrementPrivateChannelInviteUses(inviteId: string) {
+  const invite = await db.query.privateChannelInvites.findFirst({
+    where: eq(privateChannelInvites.id, inviteId),
+  });
+
+  if (!invite) return null;
+
+  return await db
+    .update(privateChannelInvites)
+    .set({ uses: invite.uses + 1 })
+    .where(eq(privateChannelInvites.id, inviteId))
     .returning();
 }
