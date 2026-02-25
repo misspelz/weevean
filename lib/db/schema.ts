@@ -135,6 +135,17 @@ export const channels = pgTable("channels", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const channelMembers = pgTable("channel_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  channelId: uuid("channel_id")
+    .notNull()
+    .references(() => channels.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+});
+
 export const messages = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),
   channelId: uuid("channel_id")
@@ -207,6 +218,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   workspaceMembers: many(workspaceMembers),
+  channelMembers: many(channelMembers),
   messages: many(messages),
   reactions: many(reactions),
   ownedWorkspaces: many(workspaces),
@@ -262,6 +274,7 @@ export const channelsRelations = relations(channels, ({ one, many }) => ({
     fields: [channels.createdBy],
     references: [users.id],
   }),
+  members: many(channelMembers),
   messages: many(messages),
 }));
 
@@ -281,6 +294,17 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
   }),
   replies: many(messages, { relationName: "thread" }),
   reactions: many(reactions),
+}));
+
+export const channelMembersRelations = relations(channelMembers, ({ one }) => ({
+  channel: one(channels, {
+    fields: [channelMembers.channelId],
+    references: [channels.id],
+  }),
+  user: one(users, {
+    fields: [channelMembers.userId],
+    references: [users.id],
+  }),
 }));
 
 export const reactionsRelations = relations(reactions, ({ one }) => ({
@@ -347,6 +371,9 @@ export type NewWorkspaceMember = typeof workspaceMembers.$inferInsert;
 
 export type Channels = typeof channels.$inferSelect;
 export type NewChannel = typeof channels.$inferInsert;
+
+export type ChannelMembers = typeof channelMembers.$inferSelect;
+export type NewChannelMember = typeof channelMembers.$inferInsert;
 
 export type Messages = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
