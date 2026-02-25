@@ -30,9 +30,19 @@ export const GET = authorizedApiHandler(async (req, ctx, session) => {
     return AppError.forbidden("Unauthorized").toResponse();
   }
 
+  if (channel.type === "private") {
+    const isChannelMember = channel.members?.some(
+      (member) => member.userId === session.user.id,
+    );
+    if (!isChannelMember) {
+      return AppError.forbidden(
+        "You do not have access to this private channel",
+      ).toResponse();
+    }
+  }
+
   const messages = await getMessagesByChannel(channelId);
   const formattedMessages = messages.map((msg) => {
-    // Group reactions
     const reactionGroups = msg.reactions.reduce(
       (acc, curr) => {
         if (!acc[curr.emoji]) acc[curr.emoji] = [];
@@ -77,6 +87,17 @@ export const POST = authorizedApiHandler(async (req, ctx, session) => {
   );
   if (!isMember) {
     return AppError.forbidden("Unauthorized").toResponse();
+  }
+
+  if (channel.type === "private") {
+    const isChannelMember = channel.members?.some(
+      (member) => member.userId === session.user.id,
+    );
+    if (!isChannelMember) {
+      return AppError.forbidden(
+        "You do not have access to this private channel",
+      ).toResponse();
+    }
   }
 
   const [message] = await createMessage({
