@@ -213,6 +213,21 @@ export const workspaceInvites = pgTable("workspace_invites", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const privateChannelInvites = pgTable("private_channel_invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  channelId: uuid("channel_id")
+    .notNull()
+    .references(() => channels.id, { onDelete: "cascade" }),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at"),
+  maxUses: integer("max_uses"),
+  uses: integer("uses").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(session),
@@ -222,6 +237,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   messages: many(messages),
   reactions: many(reactions),
   ownedWorkspaces: many(workspaces),
+  privateChannelInvites: many(privateChannelInvites),
   dmParticipant1: many(directMessages, { relationName: "participant1" }),
   dmParticipant2: many(directMessages, { relationName: "participant2" }),
   dmMessages: many(dmMessages),
@@ -276,6 +292,7 @@ export const channelsRelations = relations(channels, ({ one, many }) => ({
   }),
   members: many(channelMembers),
   messages: many(messages),
+  invites: many(privateChannelInvites),
 }));
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
@@ -360,6 +377,20 @@ export const workspaceInvitesRelations = relations(
   }),
 );
 
+export const privateChannelInvitesRelations = relations(
+  privateChannelInvites,
+  ({ one }) => ({
+    channel: one(channels, {
+      fields: [privateChannelInvites.channelId],
+      references: [channels.id],
+    }),
+    creator: one(users, {
+      fields: [privateChannelInvites.createdBy],
+      references: [users.id],
+    }),
+  }),
+);
+
 export type Users = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 
@@ -389,3 +420,6 @@ export type NewDmMessage = typeof dmMessages.$inferInsert;
 
 export type WorkspaceInvites = typeof workspaceInvites.$inferSelect;
 export type NewWorkspaceInvite = typeof workspaceInvites.$inferInsert;
+
+export type PrivateChannelInvites = typeof privateChannelInvites.$inferSelect;
+export type NewPrivateChannelInvite = typeof privateChannelInvites.$inferInsert;
