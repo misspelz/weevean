@@ -141,10 +141,11 @@ export function MessageList({
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.1 }}
                       >
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-8 w-8">
                           <AvatarImage
-                            src={message.user.image || "/placeholder.svg"}
+                            src={message.user.image || undefined}
                             alt={message.user.name}
+                            referrerPolicy="no-referrer"
                           />
                           <AvatarFallback className="bg-primary/20 text-primary">
                             {message.user.name.charAt(0).toUpperCase()}

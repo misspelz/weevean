@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/animate-ui/components/radix/dropdown-menu";
 import { CreateWorkspaceModal } from "@/components/modals/create-workspace-modal";
+import { InviteModalWrapper } from "@/components/modals/invite-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   SidebarHeader,
@@ -17,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWorkspaces } from "@/lib/hooks";
-import { ChevronsUpDown, Plus, RocketIcon } from "lucide-react";
+import { ChevronsUpDown, Plus, RocketIcon, UserPlus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo } from "react";
 
@@ -141,6 +142,24 @@ const AppHeader = () => {
                   </div>
                 </DropdownMenuItem>
               </CreateWorkspaceModal>
+
+              <DropdownMenuSeparator />
+              <InviteModalWrapper
+                workspaceId={activeTeam.id}
+                workspaceName={activeTeam.name}
+              >
+                <DropdownMenuItem
+                  className="gap-2 p-2"
+                  onSelect={(e) => e.preventDefault()} // Keep open to show modal
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                    <UserPlus className="size-4" />
+                  </div>
+                  <div className="font-medium text-muted-foreground">
+                    Invite to {activeTeam.name}
+                  </div>
+                </DropdownMenuItem>
+              </InviteModalWrapper>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>

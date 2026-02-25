@@ -1,8 +1,7 @@
 import { Message } from "@/components/shared/message-list";
+import { fetcher } from "@/lib/utils";
 import useSWR from "swr";
 import { ChannelWithCreator, WorkspaceWithOwner } from "./types";
-
-import { fetcher } from "@/lib/utils";
 
 export function useWorkspaces() {
   const { data, error, isLoading, mutate } = useSWR<WorkspaceWithOwner[]>(

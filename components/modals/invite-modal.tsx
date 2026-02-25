@@ -47,7 +47,6 @@ function InviteModal({
     }
 
     if (!newOpen) {
-      // Reset state when closing
       setTimeout(() => {
         setInviteLink("");
         setCopied(false);
