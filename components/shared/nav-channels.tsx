@@ -33,11 +33,12 @@ const NavChannels = () => {
   const router = useRouter();
   const workspaceId = searchParams.get("workspace");
   const channelId = searchParams.get("channel");
+  const dmId = searchParams.get("dm");
 
   const { channels, isLoading } = useChannels(workspaceId || undefined);
 
   useEffect(() => {
-    if (channels && channels.length > 0 && !channelId) {
+    if (channels && channels.length > 0 && !channelId && !dmId) {
       if (workspaceId) {
         const defaultChannel =
           channels.find((c) => c.name === "general") || channels[0];
@@ -46,7 +47,7 @@ const NavChannels = () => {
         router.replace(`?${params.toString()}`);
       }
     }
-  }, [channels, channelId, workspaceId, router, searchParams]);
+  }, [channels, channelId, dmId, workspaceId, router, searchParams]);
 
   if (!workspaceId) return null;
 
@@ -97,6 +98,7 @@ const NavChannels = () => {
                               searchParams.toString(),
                             );
                             params.set("channel", channel.id);
+                            params.delete("dm");
                             router.push(`?${params.toString()}`);
                           }}
                           className="flex items-center gap-2"
