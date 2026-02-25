@@ -13,9 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/animate-ui/components/radix/dropdown-menu";
+import { ChannelInviteModalWrapper } from "@/components/modals/channel-invite-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion } from "motion/react";
 import {
   Bell,
   BellOff,
@@ -25,8 +25,10 @@ import {
   Pin,
   Search,
   Settings,
+  UserPlus,
   Users,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 interface Channel {
   id: string;
@@ -34,6 +36,7 @@ interface Channel {
   description?: string;
   isPrivate: boolean;
   memberCount?: number;
+  isDM?: boolean;
 }
 
 interface ChatHeaderProps {
@@ -80,10 +83,24 @@ export function ChatHeader({
           )}
         </div>
 
-        {/* Right side - Actions */}
         <div className="flex items-center gap-1">
-          {/* Members */}
-          {channel.memberCount !== undefined && (
+          {channel.isPrivate && !channel.isDM && (
+            <ChannelInviteModalWrapper
+              channelId={channel.id}
+              channelName={channel.name}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-muted-foreground hover:text-foreground"
+              >
+                <UserPlus className="h-4 w-4" />
+                <span className="text-sm">Invite</span>
+              </Button>
+            </ChannelInviteModalWrapper>
+          )}
+
+          {channel.memberCount !== undefined && !channel.isDM && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -102,7 +119,6 @@ export function ChatHeader({
 
           <div className="mx-1 h-4 w-px bg-border" />
 
-          {/* Search */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -116,7 +132,6 @@ export function ChatHeader({
             <TooltipContent>Search in channel</TooltipContent>
           </Tooltip>
 
-          {/* Pinned messages */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -130,7 +145,6 @@ export function ChatHeader({
             <TooltipContent>Pinned messages</TooltipContent>
           </Tooltip>
 
-          {/* Notifications */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -158,7 +172,6 @@ export function ChatHeader({
             </TooltipContent>
           </Tooltip>
 
-          {/* More options */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
