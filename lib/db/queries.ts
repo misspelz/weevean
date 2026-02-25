@@ -1,6 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "./index";
 import {
+  channelMembers,
   channels,
   directMessages,
   dmMessages,
@@ -92,13 +93,29 @@ export async function isWorkspaceMember(workspaceId: string, userId: string) {
 
 // Channels
 
-export async function getChannelsByWorkspace(workspaceId: string) {
-  return await db.query.channels.findMany({
+export async function getChannelsByWorkspace(
+  workspaceId: string,
+  userId: string,
+) {
+  const userChannelMemberships = await db.query.channelMembers.findMany({
+    where: eq(channelMembers.userId, userId),
+    columns: {
+      channelId: true,
+    },
+  });
+
+  const userChannelIds = userChannelMemberships.map((m) => m.channelId);
+
+  const allWorkspaceChannels = await db.query.channels.findMany({
     where: eq(channels.workspaceId, workspaceId),
     with: {
       creator: true,
     },
   });
+
+  return allWorkspaceChannels.filter(
+    (c) => c.type === "public" || userChannelIds.includes(c.id),
+  );
 }
 
 export async function getChannelById(channelId: string) {
@@ -107,6 +124,7 @@ export async function getChannelById(channelId: string) {
     with: {
       workspace: true,
       creator: true,
+      members: true,
     },
   });
 }
@@ -118,7 +136,15 @@ export async function createChannel(data: {
   type?: "public" | "private";
   createdBy: string;
 }) {
-  return await db.insert(channels).values(data).returning();
+  const [channel] = await db.insert(channels).values(data).returning();
+
+  // Automatically add the creator as a channel member
+  await db.insert(channelMembers).values({
+    channelId: channel.id,
+    userId: data.createdBy,
+  });
+
+  return [channel];
 }
 
 // Messages

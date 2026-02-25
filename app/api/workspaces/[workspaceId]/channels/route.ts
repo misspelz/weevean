@@ -29,7 +29,7 @@ export const GET = authorizedApiHandler(async (req, ctx, session) => {
     return AppError.forbidden("Unauthorized").toResponse();
   }
 
-  const channels = await getChannelsByWorkspace(workspaceId);
+  const channels = await getChannelsByWorkspace(workspaceId, session.user.id);
   return NextResponse.json({
     result: { data: channels },
   });
