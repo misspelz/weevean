@@ -251,18 +251,21 @@ Weevean uses a modern, serverless-first architecture optimized for developer pro
 
 ## Authentication & Authorization
 
-### Supabase Auth
+### [Better Auth](https://www.better-auth.com/)
+
+Weevean uses OAuth-only authentication for simplicity and security:
+
+- **GitHub**: Sign in with your GitHub account
+- **Google**: Sign in with your Google account
 
 **Purpose**: User authentication and session management
 
-**Why Supabase Auth**:
+**Why OAuth**:
 
-- Full-featured auth (email/password, OAuth, magic links)
+- No passwords, no email verification, no waiting. Just click and you're in (OAuth Only)
 - Row Level Security (RLS) integration
-- Automatic email verification
 - Session management with refresh tokens
 - HTTP-only cookie support
-- Open source (self-hostable if needed)
 
 **Alternatives Considered**:
 
@@ -275,8 +278,6 @@ Weevean uses a modern, serverless-first architecture optimized for developer pro
 
 - HTTP-only cookies (XSS protection)
 - Automatic token refresh
-- Email verification required
-- Password hashing (bcrypt)
 - CSRF protection
 
 ---
@@ -476,7 +477,7 @@ Weevean uses the Vercel AI SDK to provide AI-powered features without vendor loc
 | Styling        | Tailwind CSS     | Fast development, consistent         | CSS-in-JS             |
 | Components     | shadcn/ui        | Customizable, accessible             | Chakra, MUI           |
 | Database       | Neon Postgres    | Serverless, autoscaling              | Supabase, PlanetScale |
-| Auth           | Supabase Auth    | Full-featured, secure                | NextAuth, Auth0       |
+| Auth           | Better Auth      | Full-featured, secure                | NextAuth.             |
 | Hosting        | Vercel           | Zero-config, edge network            | Netlify, Railway      |
 | DB Client      | Drizzle ORM      | Headless ORM                         | Neon Driver           |
 | AI Integration | Vercel AI SDK    | Multi-provider, streaming, type-safe | OpenAI SDK, LangChain |

@@ -37,10 +37,10 @@ Weevean follows a modern serverless architecture pattern optimized for scalabili
 └───────────┬────────────────────────────┬────────────────────┘
             │                            │
 ┌───────────▼──────────┐    ┌───────────▼──────────┐
-│   Supabase Auth      │    │   Neon Postgres      │
+│   Better Auth        │    │   Neon Postgres      │
 │  - User Management   │    │  - User Data         │
 │  - Session Handling  │    │  - Workspaces        │
-│  - Email Verification│    │  - Messages          │
+│  - OAuth             │    │  - Messages          │
 └──────────────────────┘    │  - Channels          │
                             └──────────────────────┘
 ```
@@ -51,7 +51,7 @@ Weevean follows a modern serverless architecture pattern optimized for scalabili
 - **React 19**: Latest features
 - **TypeScript**: Type safety across the entire stack
 - **Neon Postgres**: Serverless, autoscaling database
-- **Supabase Auth**: Managed authentication with row-level security
+- **Better Auth**: [Better Auth](https://www.better-auth.com/)
 - **Vercel**: Edge-optimized hosting with zero-config deployments
 
 ---
@@ -184,26 +184,12 @@ Standardized HTTP status codes:
 
 ### Authentication Flow
 
-```
-┌──────┐                ┌──────────┐              ┌──────────┐
-│Client│                │  Next.js │              │ Supabase │
-└──┬───┘                └────┬─────┘              └────┬─────┘
-   │                         │                         │
-   │ POST /auth/login        │                         │
-   ├────────────────────────>│                         │
-   │                         │  signInWithPassword()   │
-   │                         ├────────────────────────>│
-   │                         │                         │
-   │                         │   {access_token, user}  │
-   │                         │<────────────────────────┤
-   │                         │                         │
-   │  Set HTTP-only cookie   │                         │
-   │<────────────────────────┤                         │
-   │                         │                         │
-   │ Redirect to /chat       │                         │
-   │<────────────────────────┤                         │
-   │                         │                         │
-```
+Weevean uses OAuth-only authentication for simplicity and security:
+
+- **GitHub**: Sign in with your GitHub account
+- **Google**: Sign in with your Google account
+
+No passwords, no email verification, no waiting. Just click and you're in.
 
 ### Authorization Middleware
 
@@ -455,10 +441,6 @@ Weevean/
 │   │   ├── index.ts              # Database client
 │   │   ├── schema.ts             # Drizzle schema
 │   │   └── queries.ts            # Data access layer
-│   ├── supabase/
-│   │   ├── client.ts             # Browser client
-│   │   ├── server.ts             # Server client
-│   │   └── proxy.ts              # Middleware helper
 │   ├── code-execution/
 │   │   └── runtime-manager.ts    # WASM execution (future)
 │   └── utils.ts                  # Utility functions
@@ -514,7 +496,7 @@ Weevean/
 
 - **Encrypted connections**: TLS for all traffic
 - **Encrypted at rest**: Database encryption
-- **Sensitive data**: No passwords stored (Supabase handles)
+- **Sensitive data**: No passwords stored (OAuth used - Gg/Google)
 - **Audit logs**: Track invite usage and membership changes
 
 ---

@@ -109,7 +109,7 @@ The Weevean backend is a **microservices architecture** built with NestJS that h
     │  • Neon Postgres (Database)               │
     │  • Redis (Pub/Sub + Cache)                │
     │  • Vercel Blob (File Storage)             │
-    │  • Supabase (Auth verification only)      │
+    │  •[Better Auth](https://www.better-auth.com/)      │
     └────────────────────────────────────────────┘
 ```
 

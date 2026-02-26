@@ -46,7 +46,6 @@ We are committed to providing a welcoming and inclusive environment for all cont
 - Git
 - A code editor (VS Code recommended)
 - Neon Database account (free tier)
-- Supabase account (free tier)
 
 ---
 
