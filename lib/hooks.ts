@@ -49,3 +49,65 @@ export function useMessages(channelId?: string) {
     mutate,
   };
 }
+
+export function useDMs() {
+  const { data, error, isLoading, mutate } = useSWR<any[]>(
+    "/api/dms",
+    fetcher,
+    {
+      refreshInterval: 5000,
+    },
+  );
+
+  return {
+    dms: data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+export function useDMMessages(dmId?: string) {
+  const { data, error, isLoading, mutate } = useSWR<Message[]>(
+    dmId ? `/api/dms/${dmId}/messages` : null,
+    fetcher,
+    {
+      refreshInterval: 3000,
+    },
+  );
+
+  return {
+    messages: data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+export function useWorkspaceInvites(workspaceId?: string) {
+  const { data, error, isLoading, mutate } = useSWR<any[]>(
+    workspaceId ? `/api/workspaces/${workspaceId}/invites` : null,
+    fetcher,
+  );
+
+  return {
+    invites: data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
+
+export function useWorkspaceMembers(workspaceId?: string) {
+  const { data, error, isLoading, mutate } = useSWR<any[]>(
+    workspaceId ? `/api/workspaces/${workspaceId}/members` : null,
+    fetcher,
+  );
+
+  return {
+    members: data,
+    isLoading,
+    isError: error,
+    mutate,
+  };
+}
