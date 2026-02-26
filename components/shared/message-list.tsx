@@ -34,6 +34,7 @@ interface MessageListProps {
   currentUserId: string;
   onReact: (messageId: string, emoji: string) => void;
   onReply?: (messageId: string) => void;
+  onUserClick?: (userId: string) => void;
 }
 
 function formatMessageDate(date: Date): string {
@@ -97,6 +98,7 @@ export function MessageList({
   currentUserId,
   onReact,
   onReply,
+  onUserClick,
 }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -140,6 +142,12 @@ export function MessageList({
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.1 }}
+                        className={cn(
+                          !isOwn &&
+                            onUserClick &&
+                            "cursor-pointer hover:opacity-80 transition-opacity",
+                        )}
+                        onClick={() => !isOwn && onUserClick?.(message.user.id)}
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage
@@ -162,7 +170,13 @@ export function MessageList({
                           className={cn(
                             "font-semibold",
                             isOwn ? "text-primary" : "text-foreground",
+                            !isOwn &&
+                              onUserClick &&
+                              "cursor-pointer hover:underline",
                           )}
+                          onClick={() =>
+                            !isOwn && onUserClick?.(message.user.id)
+                          }
                         >
                           {message.user.name}
                         </span>
